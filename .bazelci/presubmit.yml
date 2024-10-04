@@ -1,0 +1,56 @@
+---
+buildifier: latest
+
+matrix:
+  platform:
+    - ubuntu2004
+    - macos
+    # TODO: Enable Windows once the private API it allowlists rules_shell.
+    # - windows
+
+tasks:
+  test_module_bzlmod:
+    name: "Test module (Bazel 7.3.2, Bzlmod)"
+    working_directory: "tests/bcr"
+    bazel: 7.3.2
+    platform: ${{ platform }}
+    build_flags:
+      - "--enable_bzlmod"
+      - "--noenable_workspace"
+    build_targets:
+      - "//..."
+    test_flags:
+      - "--enable_bzlmod"
+      - "--noenable_workspace"
+    test_targets:
+      - "//..."
+  test_module_workspace:
+    name: "Test module (Bazel 7.3.2, WORKSPACE)"
+    working_directory: "tests/bcr"
+    bazel: 7.3.2
+    platform: ${{ platform }}
+    build_flags:
+      - "--noenable_bzlmod"
+      - "--enable_workspace"
+    build_targets:
+      - "//..."
+    test_flags:
+      - "--noenable_bzlmod"
+      - "--enable_workspace"
+    test_targets:
+      - "//..."
+  test_module_head:
+    name: "Test module (Bazel@HEAD, Bzlmod)"
+    working_directory: "tests/bcr"
+    bazel: last_green
+    platform: ${{ platform }}
+    build_flags:
+      - "--enable_bzlmod"
+      - "--noenable_workspace"
+    build_targets:
+      - "//..."
+    test_flags:
+      - "--enable_bzlmod"
+      - "--noenable_workspace"
+    test_targets:
+      - "//..."
