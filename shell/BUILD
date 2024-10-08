@@ -9,7 +9,20 @@
 # Bazel's sh_* rules.
 #
 # Toolchains registered for this type should have target constraints.
+
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
 toolchain_type(
     name = "toolchain_type",
     visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "rules_bzl",
+    srcs = [
+        "sh_binary.bzl",
+        "sh_library.bzl",
+        "sh_test.bzl",
+    ],
+    deps = ["//shell/private:private_bzl"],
 )
