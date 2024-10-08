@@ -24,6 +24,6 @@ bzl_library(
         "sh_library.bzl",
         "sh_test.bzl",
     ],
-    deps = ["//shell/private:private_bzl"],
     visibility = ["//visibility:public"],
+    deps = ["//shell/private:private_bzl"],
 )
