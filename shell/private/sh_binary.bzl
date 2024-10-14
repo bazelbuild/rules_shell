@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""sh_test rule definition."""
+"""sh_binary rule definition."""
 
-load("//shell/private:sh_test.bzl", _sh_test = "sh_test")
+load(":sh_executable.bzl", "make_sh_executable_rule")
 
+# For doc generation only.
 visibility("public")
 
-sh_test = getattr(native, "sh_test", _sh_test)
+sh_binary = make_sh_executable_rule(executable = True)

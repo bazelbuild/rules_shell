@@ -14,6 +14,8 @@
 
 """WORKSPACE dependency macros for the shell rules."""
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 load("//shell/private/repositories:sh_config.bzl", "sh_config")
 
 visibility("public")
@@ -21,7 +23,15 @@ visibility("public")
 # buildifier: disable=unnamed-macro
 def rules_shell_dependencies():
     """Instantiates repositories required by rules_shell."""
-    pass
+    maybe(
+        http_archive,
+        name = "bazel_skylib",
+        sha256 = "bc283cdfcd526a52c3201279cda4bc298652efa898b10b4db0837dc51652756f",
+        urls = [
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz",
+        ],
+    )
 
 # buildifier: disable=unnamed-macro
 def rules_shell_toolchains():

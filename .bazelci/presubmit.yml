@@ -5,8 +5,7 @@ matrix:
   platform:
     - ubuntu2004
     - macos
-    # TODO: Enable Windows once the private API it allowlists rules_shell.
-    # - windows
+    - windows
 
 tasks:
   test_module_bzlmod:
@@ -37,6 +36,15 @@ tasks:
     test_flags:
       - "--noenable_bzlmod"
       - "--enable_workspace"
+    test_targets:
+      - "//..."
+  test_module_workspace_bazel6:
+    name: "Test module (Bazel 6.5.0, WORKSPACE)"
+    working_directory: "tests/bcr"
+    bazel: 6.5.0
+    platform: ${{ platform }}
+    build_targets:
+      - "//..."
     test_targets:
       - "//..."
   test_module_head:
