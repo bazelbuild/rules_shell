@@ -14,7 +14,8 @@
 
 """sh_library rule definition."""
 
-visibility("//shell")
+# For doc generation only.
+visibility("public")
 
 def _sh_library_impl(ctx):
     transitive_files = []

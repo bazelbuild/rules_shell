@@ -16,6 +16,7 @@
 
 load(":sh_executable.bzl", "make_sh_executable_rule")
 
-visibility("//shell")
+# For doc generation only.
+visibility("public")
 
 sh_binary = make_sh_executable_rule(executable = True)
