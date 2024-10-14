@@ -14,8 +14,8 @@
 
 """sh_binary rule definition."""
 
-load("//shell/private:sh_executable.bzl", "make_sh_executable_rule")
+load("//shell/private:sh_binary.bzl", _sh_binary = "sh_binary")
 
 visibility("public")
 
-sh_binary = make_sh_executable_rule(executable = True)
+sh_binary = getattr(native, "sh_binary", _sh_binary)
