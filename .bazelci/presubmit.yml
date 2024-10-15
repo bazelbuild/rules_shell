@@ -6,45 +6,35 @@ matrix:
     - ubuntu2004
     - macos
     - windows
+  bazel:
+    - 6.5.0
+    - 7.3.2
 
 tasks:
   test_module_bzlmod:
-    name: "Test module (Bazel 7.3.2, Bzlmod)"
+    name: "Test module (Bzlmod)"
     working_directory: "tests/bcr"
-    bazel: 7.3.2
+    bazel: ${{ bazel }}
     platform: ${{ platform }}
     build_flags:
       - "--enable_bzlmod"
-      - "--noenable_workspace"
     build_targets:
       - "//..."
     test_flags:
       - "--enable_bzlmod"
-      - "--noenable_workspace"
     test_targets:
       - "//..."
   test_module_workspace:
-    name: "Test module (Bazel 7.3.2, WORKSPACE)"
+    name: "Test module (WORKSPACE)"
     working_directory: "tests/bcr"
-    bazel: 7.3.2
+    bazel: ${{ bazel }}
     platform: ${{ platform }}
     build_flags:
-      - "--noenable_bzlmod"
-      - "--enable_workspace"
+      - "--enable_bzlmod"
     build_targets:
       - "//..."
     test_flags:
-      - "--noenable_bzlmod"
-      - "--enable_workspace"
-    test_targets:
-      - "//..."
-  test_module_workspace_bazel6:
-    name: "Test module (Bazel 6.5.0, WORKSPACE)"
-    working_directory: "tests/bcr"
-    bazel: 6.5.0
-    platform: ${{ platform }}
-    build_targets:
-      - "//..."
+      - "--enable_bzlmod"
     test_targets:
       - "//..."
   test_module_head:
@@ -52,13 +42,7 @@ tasks:
     working_directory: "tests/bcr"
     bazel: last_green
     platform: ${{ platform }}
-    build_flags:
-      - "--enable_bzlmod"
-      - "--noenable_workspace"
     build_targets:
       - "//..."
-    test_flags:
-      - "--enable_bzlmod"
-      - "--noenable_workspace"
     test_targets:
       - "//..."
