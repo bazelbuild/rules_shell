@@ -6,7 +6,7 @@ sh_library(
     name = "lib",
     srcs = ["lib.sh"],
     data = ["greeting.txt"],
-    deps = ["@bazel_tools//tools/bash/runfiles"],
+    deps = ["@rules_shell//shell/runfiles"],
 )
 
 sh_binary(
@@ -14,7 +14,7 @@ sh_binary(
     srcs = ["bin.sh"],
     deps = [
         ":lib",
-        "@bazel_tools//tools/bash/runfiles",
+        "@rules_shell//shell/runfiles",
     ],
 )
 
@@ -22,5 +22,5 @@ sh_test(
     name = "test",
     srcs = ["test.sh"],
     data = [":bin"],
-    deps = ["@bazel_tools//tools/bash/runfiles"],
+    deps = ["@rules_shell//shell/runfiles"],
 )

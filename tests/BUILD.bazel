@@ -1,7 +1,0 @@
-load("//shell:sh_test.bzl", "sh_test")
-
-# Placeholder test to get the release action's `bazel test` to pass.
-sh_test(
-    name = "test",
-    srcs = ["test.sh"],
-)
