@@ -14,6 +14,11 @@
 
 """Helper rule to preserve the legacy runfiles path for the runfiles lib."""
 
+# Requires the private skip_conflict_checking parameter on ctx.runfiles, which
+# is only available as of Bazel 7.4.0. We only use it when the native shell
+# rules are not available.
+ROOT_SYMLINKS_SUPPORTED = not hasattr(native, "sh_binary")
+
 def _single_file_or_fail(target):
     files = target[DefaultInfo].files.to_list()
     if len(files) != 1:
