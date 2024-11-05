@@ -26,6 +26,10 @@ def _root_symlinks_impl(ctx):
             path: _single_file_or_fail(target)
             for target, path in ctx.attr.root_symlinks.items()
         },
+        # Adding root symlinks from Starlark usually enables conflict checking,
+        # but that would break backwards compatibility as it affects all
+        # runfiles, not just the symlinks.
+        skip_conflict_checking = True,
     )
     return [
         DefaultInfo(
