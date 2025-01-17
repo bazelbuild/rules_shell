@@ -87,13 +87,11 @@ load("@rules_shell//shell/toolchains:sh_toolchain.bzl", "sh_toolchain")
 
 sh_config = repository_rule(
     environ = [
+        "BAZEL_SH",
         "WINDIR",
         "PATH",
     ],
-    # TODO: Replace this with configure = True and add BAZEL_SH to the
-    # environ list above for consistency with CC and other repo rules.
-    # This would make discovery differ from --shell_executable.
-    local = True,
+    configure = True,
     implementation = _sh_config_impl,
 )
 
