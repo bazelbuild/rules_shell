@@ -91,9 +91,7 @@ sh_config = repository_rule(
         "WINDIR",
         "PATH",
     ],
-    # TODO: Replace this with configure = True for consistency with CC and other repo rules.
-    # This would make discovery differ from --shell_executable.
-    local = True,
+    configure = True,
     implementation = _sh_config_impl,
 )
 
