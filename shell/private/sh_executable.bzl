@@ -16,7 +16,7 @@
 
 visibility(["//shell"])
 
-_SH_TOOLCHAIN_TYPE = "//shell:toolchain_type"
+_SH_TOOLCHAIN_TYPE = Label("//shell:toolchain_type")
 
 def _sh_executable_impl(ctx):
     if len(ctx.files.srcs) != 1:
@@ -123,10 +123,14 @@ def _launcher_for_windows(ctx, primary_output, main_file):
     # bazel_tools should always registers a toolchain for Windows, but it may have an empty path.
     sh_toolchain = ctx.toolchains[_SH_TOOLCHAIN_TYPE]
     if not sh_toolchain or not sh_toolchain.path:
-        fail("""No suitable shell toolchain found:
+        # Let fail print the toolchain type with an apparent repo name.
+        fail(
+            """No suitable shell toolchain found:
 * if you are running Bazel on Windows, set the BAZEL_SH environment variable to the path of bash.exe
-* if you are running Bazel on a non-Windows platform but are targeting Windows, register an sh_toolchain for the {} toolchain type
-""".format(_SH_TOOLCHAIN_TYPE))
+* if you are running Bazel on a non-Windows platform but are targeting Windows, register an sh_toolchain for the""",
+            _SH_TOOLCHAIN_TYPE,
+            "toolchain type",
+        )
 
     return _create_windows_exe_launcher(ctx, sh_toolchain, primary_output)
 
