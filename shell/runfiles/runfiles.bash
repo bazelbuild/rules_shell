@@ -69,7 +69,7 @@
 #
 #       # --- begin runfiles.bash initialization v3 ---
 #       # Copy-pasted from the Bazel Bash runfiles library v3.
-#       set -uo pipefail; set +e; f=bazel_tools/tools/bash/runfiles/runfiles.bash
+#       set -uo pipefail; set +e; f=rules_shell+/shell/runfiles/runfiles.bash
 #       # shellcheck disable=SC1090
 #       source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null || \
 #         source "$(grep -sm1 "^$f " "${RUNFILES_MANIFEST_FILE:-/dev/null}" | cut -f2- -d' ')" 2>/dev/null || \
@@ -90,7 +90,7 @@ if [[ ! -d "${RUNFILES_DIR:-/dev/null}" && ! -f "${RUNFILES_MANIFEST_FILE:-/dev/
     export RUNFILES_MANIFEST_FILE="$0.runfiles_manifest"
   elif [[ -f "$0.runfiles/MANIFEST" ]]; then
     export RUNFILES_MANIFEST_FILE="$0.runfiles/MANIFEST"
-  elif [[ -f "$0.runfiles/bazel_tools/tools/bash/runfiles/runfiles.bash" ]]; then
+  elif [[ -f "$0.runfiles/rules_shell/shell/runfiles/runfiles.bash" ]]; then
     export RUNFILES_DIR="$0.runfiles"
   fi
 fi
