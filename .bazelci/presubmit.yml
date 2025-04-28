@@ -9,6 +9,7 @@ matrix:
   bazel:
     - 6.5.0
     - 7.4.0
+    - 8.0.0
 
 tasks:
   test_module_bzlmod:
