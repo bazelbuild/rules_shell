@@ -11,3 +11,5 @@ sh_configure = use_extension("//shell/private/extensions:sh_configure.bzl", "sh_
 use_repo(sh_configure, "local_config_shell")
 
 register_toolchains("@local_config_shell//:all")
+
+bazel_dep(name = "rules_shellcheck", version = "0.3.3", dev_dependency = True)
