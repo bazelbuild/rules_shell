@@ -20,3 +20,8 @@ root_symlinks(
     },
     tags = ["manual"],
 )
+
+exports_files(
+    ["runfiles.bash"],
+    visibility = ["//tests/runfiles:__pkg__"],
+)
