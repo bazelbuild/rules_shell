@@ -329,6 +329,44 @@ EOF
   [[ "$(rlocation "config.json" "protobuf+3.19.2" || echo failed)" == "$RUNFILES_DIR/config.json" ]] || fail
 }
 
+function test_directory_based_runfiles_with_repo_mapping_from_extension_repo() {
+  local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
+
+  export RUNFILES_DIR=${tmpdir}/mock/runfiles
+  mkdir -p "$RUNFILES_DIR"
+  cat > "$RUNFILES_DIR/_repo_mapping" <<EOF
+,config.json,config.json+1.2.3
+,my_module,_main
+,my_protobuf,protobuf+3.19.2
+,my_workspace,_main
+my_module++ex+*,my_module,my_module+
+my_module++ext+*,my_module,my_module+
+my_module++ext+*,repo1,my_module++ext+repo1
+my_module++ext1+*,my_module,my_module+
+EOF
+  export RUNFILES_MANIFEST_FILE=
+  source "$runfiles_lib_path"
+
+  mkdir -p "$RUNFILES_DIR/_main/bar"
+  touch "$RUNFILES_DIR/_main/bar/runfile"
+  mkdir -p "$RUNFILES_DIR/protobuf+3.19.2/bar/dir/de eply/nes ted"
+  touch "$RUNFILES_DIR/protobuf+3.19.2/bar/dir/file"
+  touch "$RUNFILES_DIR/protobuf+3.19.2/bar/dir/de eply/nes ted/fi+le"
+  mkdir -p "$RUNFILES_DIR/protobuf+3.19.2/foo"
+  touch "$RUNFILES_DIR/protobuf+3.19.2/foo/runfile"
+  touch "$RUNFILES_DIR/config.json"
+  mkdir -p "$RUNFILES_DIR/my_module+/foo"
+  touch "$RUNFILES_DIR/my_module+/foo/runfile"
+  mkdir -p "$RUNFILES_DIR/my_module++ext+repo1/foo"
+  touch "$RUNFILES_DIR/my_module++ext+repo1/foo/runfile"
+  mkdir -p "$RUNFILES_DIR/repo2+/foo"
+  touch "$RUNFILES_DIR/repo2+/foo/runfile"
+
+  [[ "$(rlocation "my_module/foo/runfile" "my_module++ext+repo1" || echo failed)" == "$RUNFILES_DIR/my_module+/foo/runfile" ]] || fail
+  [[ "$(rlocation "repo1/foo/runfile" "my_module++ext+repo1" || echo failed)" == "$RUNFILES_DIR/my_module++ext+repo1/foo/runfile" ]] || fail
+  [[ "$(rlocation "repo2+/foo/runfile" "my_module++ext+repo1" || echo failed)" == "$RUNFILES_DIR/repo2+/foo/runfile" ]] || fail
+}
+
 function test_manifest_based_runfiles_with_repo_mapping_from_main() {
   local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
 
@@ -425,6 +463,53 @@ EOF
   [[ "$(rlocation "protobuf+3.19.2/bar/dir/de eply/nes ted/fi+le" "protobuf+3.19.2" || echo failed)" == "$tmpdir/protobuf+3.19.2/bar/dir/de eply/nes ted/fi+le" ]] || fail
 
   [[ "$(rlocation "config.json" "protobuf+3.19.2" || echo failed)" == "$tmpdir/config.json" ]] || fail
+}
+
+function test_manifest_based_runfiles_with_repo_mapping_from_extension_repo() {
+  local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
+
+  cat > "$tmpdir/foo.repo_mapping" <<EOF
+,config.json,config.json+1.2.3
+,my_module,_main
+,my_protobuf,protobuf+3.19.2
+,my_workspace,_main
+my_module++ex+*,my_module,my_module+
+my_module++ext+*,my_module,my_module+
+my_module++ext+*,repo1,my_module++ext+repo1
+my_module++ext1+*,my_module,my_module+
+EOF
+  export RUNFILES_DIR=
+  export RUNFILES_MANIFEST_FILE="$tmpdir/foo.runfiles_manifest"
+  cat > "$RUNFILES_MANIFEST_FILE" << EOF
+_repo_mapping $tmpdir/foo.repo_mapping
+config.json $tmpdir/config.json
+protobuf+3.19.2/foo/runfile $tmpdir/protobuf+3.19.2/foo/runfile
+_main/bar/runfile $tmpdir/_main/bar/runfile
+protobuf+3.19.2/bar/dir $tmpdir/protobuf+3.19.2/bar/dir
+my_module+/foo/runfile $tmpdir/my_module+/runfile
+my_module++ext+repo1/foo/runfile $tmpdir/my_module++ext+repo1/runfile
+repo2+/foo/runfile $tmpdir/repo2+/runfile
+EOF
+  source "$runfiles_lib_path"
+
+  mkdir -p "$tmpdir/_main/bar"
+  touch "$tmpdir/_main/bar/runfile"
+  mkdir -p "$tmpdir/protobuf+3.19.2/bar/dir/de eply/nes ted"
+  touch "$tmpdir/protobuf+3.19.2/bar/dir/file"
+  touch "$tmpdir/protobuf+3.19.2/bar/dir/de eply/nes ted/fi+le"
+  mkdir -p "$tmpdir/protobuf+3.19.2/foo"
+  touch "$tmpdir/protobuf+3.19.2/foo/runfile"
+  touch "$tmpdir/config.json"
+  mkdir -p "$tmpdir/my_module+"
+  touch "$tmpdir/my_module+/runfile"
+  mkdir -p "$tmpdir/my_module++ext+repo1"
+  touch "$tmpdir/my_module++ext+repo1/runfile"
+  mkdir -p "$tmpdir/repo2+"
+  touch "$tmpdir/repo2+/runfile"
+
+  [[ "$(rlocation "my_module/foo/runfile" "my_module++ext+repo1" || echo failed)" == "$tmpdir/my_module+/runfile" ]] || fail
+  [[ "$(rlocation "repo1/foo/runfile" "my_module++ext+repo1" || echo failed)" == "$tmpdir/my_module++ext+repo1/runfile" ]] || fail
+  [[ "$(rlocation "repo2+/foo/runfile" "my_module++ext+repo1" || echo failed)" == "$tmpdir/repo2+/runfile" ]] || fail
 }
 
 function test_directory_based_envvars() {
