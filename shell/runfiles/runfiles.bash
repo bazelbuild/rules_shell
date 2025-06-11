@@ -148,7 +148,7 @@ function rlocation() {
 
   if [[ -f "$RUNFILES_REPO_MAPPING" ]]; then
     local -r target_repo_apparent_name=$(echo "$1" | cut -d / -f 1)
-     # Use -s to get an empty remainder if the argument does not contain a slash.
+    # Use -s to get an empty remainder if the argument does not contain a slash.
     # The repo mapping should not be applied to single segment paths, which may
     # be root symlinks.
     local -r remainder=$(echo "$1" | cut -s -d / -f 2-)
@@ -407,8 +407,8 @@ function runfiles_rlocation_checked() {
           escaped=false
         fi
         # The extra space below is added because cut counts from 1.
-        trim_length=$(echo -n "$search_prefix  " | wc -c)
-        prefix_result=$(__runfiles_maybe_grep -m1 "$(echo -n "$search_prefix" | sed 's/[.[\*^$]/\\&/g') " "${RUNFILES_MANIFEST_FILE}" | cut -b "${trim_length}"-)
+        trim_length=$(echo -n "$search_prefix  " | wc -c | tr -d ' ')
+        prefix_result=$(__runfiles_maybe_grep -m1 "^$(echo -n "$search_prefix" | sed 's/[.[\*^$]/\\&/g') " "${RUNFILES_MANIFEST_FILE}" | cut -b "${trim_length}"-)
         if [[ "$escaped" = true ]]; then
           prefix_result="${prefix_result//\\n/$'\n'}"
           prefix_result="${prefix_result//\\b/\\}"
