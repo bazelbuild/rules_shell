@@ -1,6 +1,11 @@
 load("//shell:sh_library.bzl", "sh_library")
 load("//shell/private:root_symlinks.bzl", "ROOT_SYMLINKS_SUPPORTED", "root_symlinks")
 
+exports_files(
+    srcs = ["runfiles.bash"],
+    visibility = ["//visibility:public"],
+)
+
 alias(
     name = "runfiles",
     actual = ":runfiles_impl" if ROOT_SYMLINKS_SUPPORTED else "@bazel_tools//tools/bash/runfiles",
@@ -11,6 +16,7 @@ sh_library(
     name = "runfiles_impl",
     data = [":runfiles_at_legacy_location"],
     tags = ["manual"],
+    deprecation = "Runfiles are now implicitly available when using sh_*() rules",
 )
 
 root_symlinks(

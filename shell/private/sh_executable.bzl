@@ -44,7 +44,11 @@ def _sh_executable_impl(ctx):
         main_executable = symlink
 
     files = depset(direct = direct_files)
-    runfiles = ctx.runfiles(transitive_files = files, collect_default = True)
+    runfiles = ctx.runfiles(
+        transitive_files = files,
+        collect_default = True,
+        root_symlinks = {"bin/runfiles.bash": ctx.file._runfiles_script},
+    )
     default_info = DefaultInfo(
         executable = main_executable,
         files = files,
@@ -59,6 +63,8 @@ def _sh_executable_impl(ctx):
 
     run_environment_info = RunEnvironmentInfo(
         environment = {
+            "RUNFILES_BIN": "../bin",
+        } | {
             key: ctx.expand_make_variables(
                 "env",
                 ctx.expand_location(value, ctx.attr.data, short_paths = True),
@@ -192,6 +198,10 @@ most build rules</a>.
             "env_inherit": attr.string_list(),
             "_windows_constraint": attr.label(
                 default = "@platforms//os:windows",
+            ),
+            "_runfiles_script": attr.label(
+                default = Label("//shell/runfiles:runfiles.bash"),
+                allow_single_file = True,
             ),
         } | extra_attrs,
         toolchains = [
