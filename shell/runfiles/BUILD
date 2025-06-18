@@ -9,6 +9,7 @@ alias(
 
 sh_library(
     name = "runfiles_impl",
+    srcs = [":runfiles.bash"],
     data = [":runfiles_at_legacy_location"],
     tags = ["manual"],
 )
