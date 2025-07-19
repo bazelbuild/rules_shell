@@ -58,7 +58,7 @@
 #       sh_binary(
 #           name = "my_binary",
 #           ...
-#           deps = ["@bazel_tools//tools/bash/runfiles"],
+#           deps = ["@rules_shell//shell/runfiles"],
 #       )
 #
 # 2.  Source the runfiles library.
