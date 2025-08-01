@@ -96,24 +96,28 @@ if [[ ! -d "${RUNFILES_DIR:-/dev/null}" && ! -f "${RUNFILES_MANIFEST_FILE:-/dev/
 fi
 
 case "$(uname -s | tr '[:upper:]' '[:lower:]')" in
-msys*|mingw*|cygwin*)
-  # matches an absolute Windows path
-  export _RLOCATION_ISABS_PATTERN="^[a-zA-Z]:[/\\]"
-  # Windows paths are case insensitive and Bazel and MSYS2 capitalize differently, so we can't
-  # assume that all paths are in the same native case.
-  export _RLOCATION_GREP_CASE_INSENSITIVE_ARGS=-i
-  ;;
-*)
-  # matches an absolute Unix path
-  export _RLOCATION_ISABS_PATTERN="^/[^/].*"
-  export _RLOCATION_GREP_CASE_INSENSITIVE_ARGS=
-  ;;
+  msys* | mingw* | cygwin*)
+    # matches an absolute Windows path
+    export _RLOCATION_ISABS_PATTERN="^[a-zA-Z]:[/\\]"
+    # Windows paths are case insensitive and Bazel and MSYS2 capitalize differently, so we can't
+    # assume that all paths are in the same native case.
+    export _RLOCATION_GREP_CASE_INSENSITIVE_ARGS=-i
+    ;;
+  *)
+    # matches an absolute Unix path
+    export _RLOCATION_ISABS_PATTERN="^/[^/].*"
+    export _RLOCATION_GREP_CASE_INSENSITIVE_ARGS=
+    ;;
 esac
 
 # Does not exit with a non-zero exit code if no match is found and performs a case-insensitive
 # search on Windows.
 function __runfiles_maybe_grep() {
-  grep $_RLOCATION_GREP_CASE_INSENSITIVE_ARGS "$@" || test $? = 1;
+  # The GREP_XXX variables influence how grep behaves. Specifically, they can
+  # affect the output from the grep command.
+  unset GREP_COLOR
+  unset GREP_OPTIONS
+  grep $_RLOCATION_GREP_CASE_INSENSITIVE_ARGS "$@" || test $? = 1
 }
 export -f __runfiles_maybe_grep
 
@@ -148,7 +152,7 @@ function rlocation() {
   elif [[ "$1" == \\* ]]; then
     if [[ "${RUNFILES_LIB_DEBUG:-}" == 1 ]]; then
       echo >&2 "ERROR[runfiles.bash]: rlocation($1): absolute path without" \
-               "drive name"
+        "drive name"
     fi
     return 1
   fi
@@ -211,8 +215,8 @@ export -f rlocation
 # libraries under @bazel_tools//tools/<lang>/runfiles, then that binary needs
 # these envvars in order to initialize its own runfiles library.
 function runfiles_export_envvars() {
-  if [[ ! -f "${RUNFILES_MANIFEST_FILE:-/dev/null}" \
-        && ! -d "${RUNFILES_DIR:-/dev/null}" ]]; then
+  if [[ ! -f "${RUNFILES_MANIFEST_FILE:-/dev/null}" &&
+    ! -d "${RUNFILES_DIR:-/dev/null}" ]]; then
     return 1
   fi
 
@@ -225,12 +229,12 @@ function runfiles_export_envvars() {
       export RUNFILES_MANIFEST_FILE=
     fi
   elif [[ ! -d "${RUNFILES_DIR:-/dev/null}" ]]; then
-    if [[ "$RUNFILES_MANIFEST_FILE" == */MANIFEST \
-          && -d "${RUNFILES_MANIFEST_FILE%/MANIFEST}" ]]; then
+    if [[ "$RUNFILES_MANIFEST_FILE" == */MANIFEST &&
+      -d "${RUNFILES_MANIFEST_FILE%/MANIFEST}" ]]; then
       export RUNFILES_DIR="${RUNFILES_MANIFEST_FILE%/MANIFEST}"
       export JAVA_RUNFILES="$RUNFILES_DIR"
-    elif [[ "$RUNFILES_MANIFEST_FILE" == *_manifest \
-          && -d "${RUNFILES_MANIFEST_FILE%_manifest}" ]]; then
+    elif [[ "$RUNFILES_MANIFEST_FILE" == *_manifest &&
+      -d "${RUNFILES_MANIFEST_FILE%_manifest}" ]]; then
       export RUNFILES_DIR="${RUNFILES_MANIFEST_FILE%_manifest}"
       export JAVA_RUNFILES="$RUNFILES_DIR"
     else
@@ -256,7 +260,10 @@ function runfiles_current_repository() {
   if [[ "$raw_caller_path" =~ $_RLOCATION_ISABS_PATTERN ]]; then
     local -r caller_path="$raw_caller_path"
   else
-    local -r caller_path="$(cd "$(dirname "$raw_caller_path")" || return 1; pwd)/$(basename "$raw_caller_path")"
+    local -r caller_path="$(
+      cd "$(dirname "$raw_caller_path")" || return 1
+      pwd
+    )/$(basename "$raw_caller_path")"
   fi
   if [[ "${RUNFILES_LIB_DEBUG:-}" == 1 ]]; then
     echo >&2 "INFO[runfiles.bash]: runfiles_current_repository($idx): caller's path is ($caller_path)"
@@ -482,8 +489,8 @@ function runfiles_rlocation_checked() {
   else
     if [[ "${RUNFILES_LIB_DEBUG:-}" == 1 ]]; then
       echo >&2 "ERROR[runfiles.bash]: cannot look up runfile \"$1\" " \
-               "(RUNFILES_DIR=\"${RUNFILES_DIR:-}\"," \
-               "RUNFILES_MANIFEST_FILE=\"${RUNFILES_MANIFEST_FILE:-}\")"
+        "(RUNFILES_DIR=\"${RUNFILES_DIR:-}\"," \
+        "RUNFILES_MANIFEST_FILE=\"${RUNFILES_MANIFEST_FILE:-}\")"
     fi
     return 1
   fi
