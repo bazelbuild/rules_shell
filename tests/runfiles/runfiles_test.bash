@@ -38,12 +38,12 @@ function log_info() {
 which uname >&/dev/null || fail "cannot locate GNU coreutils"
 
 case "$(uname -s | tr [:upper:] [:lower:])" in
-  msys* | mingw* | cygwin*)
-    function is_windows() { true; }
-    ;;
-  *)
-    function is_windows() { false; }
-    ;;
+msys*|mingw*|cygwin*)
+  function is_windows() { true; }
+  ;;
+*)
+  function is_windows() { false; }
+  ;;
 esac
 
 function find_runfiles_lib() {
@@ -66,7 +66,7 @@ function find_runfiles_lib() {
     echo "${RUNFILES_DIR}/bazel_tools/tools/bash/runfiles/runfiles.bash"
   elif [[ -f "${RUNFILES_MANIFEST_FILE:-/dev/null}" ]]; then
     grep -m1 "^bazel_tools/tools/bash/runfiles/runfiles.bash " \
-      "$RUNFILES_MANIFEST_FILE" | cut -d ' ' -f 2-
+        "$RUNFILES_MANIFEST_FILE" | cut -d ' ' -f 2-
   else
     echo >&2 "ERROR: cannot find //shell/runfiles:runfiles.bash"
     exit 1
@@ -135,7 +135,7 @@ function test_rlocation_abs_path() {
 
 function test_init_manifest_based_runfiles() {
   local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
-  cat >$tmpdir/foo.runfiles_manifest <<EOF
+  cat > $tmpdir/foo.runfiles_manifest << EOF
 a/b $tmpdir/c/d
 e/f $tmpdir/g h
 y $tmpdir/y
@@ -211,7 +211,7 @@ EOF
 
 function test_manifest_based_envvars() {
   local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
-  echo "a b" >$tmpdir/foo.runfiles_manifest
+  echo "a b" > $tmpdir/foo.runfiles_manifest
 
   export RUNFILES_DIR=
   export RUNFILES_MANIFEST_FILE=$tmpdir/foo.runfiles_manifest
@@ -248,7 +248,7 @@ function test_directory_based_runfiles_with_repo_mapping_from_main() {
 
   export RUNFILES_DIR=${tmpdir}/mock/runfiles
   mkdir -p "$RUNFILES_DIR"
-  cat >"$RUNFILES_DIR/_repo_mapping" <<EOF
+  cat > "$RUNFILES_DIR/_repo_mapping" <<EOF
 ,config.json,config.json+1.2.3
 ,my_module,_main
 ,my_protobuf,protobuf+3.19.2
@@ -292,7 +292,7 @@ function test_directory_based_runfiles_with_repo_mapping_from_other_repo() {
 
   export RUNFILES_DIR=${tmpdir}/mock/runfiles
   mkdir -p "$RUNFILES_DIR"
-  cat >"$RUNFILES_DIR/_repo_mapping" <<EOF
+  cat > "$RUNFILES_DIR/_repo_mapping" <<EOF
 ,config.json,config.json+1.2.3
 ,my_module,_main
 ,my_protobuf,protobuf+3.19.2
@@ -334,7 +334,7 @@ function test_directory_based_runfiles_with_repo_mapping_from_extension_repo() {
 
   export RUNFILES_DIR=${tmpdir}/mock/runfiles
   mkdir -p "$RUNFILES_DIR"
-  cat >"$RUNFILES_DIR/_repo_mapping" <<EOF
+  cat > "$RUNFILES_DIR/_repo_mapping" <<EOF
 ,config.json,config.json+1.2.3
 ,my_module,_main
 ,my_protobuf,protobuf+3.19.2
@@ -370,7 +370,7 @@ EOF
 function test_manifest_based_runfiles_with_repo_mapping_from_main() {
   local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
 
-  cat >"$tmpdir/foo.repo_mapping" <<EOF
+  cat > "$tmpdir/foo.repo_mapping" <<EOF
 ,config.json,config.json+1.2.3
 ,my_module,_main
 ,my_protobuf,protobuf+3.19.2
@@ -380,7 +380,7 @@ protobuf+3.19.2,config.json,config.json+1.2.3
 EOF
   export RUNFILES_DIR=
   export RUNFILES_MANIFEST_FILE="$tmpdir/foo.runfiles_manifest"
-  cat >"$RUNFILES_MANIFEST_FILE" <<EOF
+  cat > "$RUNFILES_MANIFEST_FILE" << EOF
 _repo_mapping $tmpdir/foo.repo_mapping
 config.json $tmpdir/config.json
 protobuf+3.19.2/foo/runfile $tmpdir/protobuf+3.19.2/foo/runfile
@@ -420,7 +420,7 @@ EOF
 function test_manifest_based_runfiles_with_repo_mapping_from_other_repo() {
   local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
 
-  cat >"$tmpdir/foo.repo_mapping" <<EOF
+  cat > "$tmpdir/foo.repo_mapping" <<EOF
 ,config.json,config.json+1.2.3
 ,my_module,_main
 ,my_protobuf,protobuf+3.19.2
@@ -430,7 +430,7 @@ protobuf+3.19.2,config.json,config.json+1.2.3
 EOF
   export RUNFILES_DIR=
   export RUNFILES_MANIFEST_FILE="$tmpdir/foo.runfiles_manifest"
-  cat >"$RUNFILES_MANIFEST_FILE" <<EOF
+  cat > "$RUNFILES_MANIFEST_FILE" << EOF
 _repo_mapping $tmpdir/foo.repo_mapping
 config.json $tmpdir/config.json
 protobuf+3.19.2/foo/runfile $tmpdir/protobuf+3.19.2/foo/runfile
@@ -468,7 +468,7 @@ EOF
 function test_manifest_based_runfiles_with_repo_mapping_from_extension_repo() {
   local tmpdir="$(mktemp -d $TEST_TMPDIR/tmp.XXXXXXXX)"
 
-  cat >"$tmpdir/foo.repo_mapping" <<EOF
+  cat > "$tmpdir/foo.repo_mapping" <<EOF
 ,config.json,config.json+1.2.3
 ,my_module,_main
 ,my_protobuf,protobuf+3.19.2
@@ -480,7 +480,7 @@ my_module++ext1+*,my_module,my_module+
 EOF
   export RUNFILES_DIR=
   export RUNFILES_MANIFEST_FILE="$tmpdir/foo.runfiles_manifest"
-  cat >"$RUNFILES_MANIFEST_FILE" <<EOF
+  cat > "$RUNFILES_MANIFEST_FILE" << EOF
 _repo_mapping $tmpdir/foo.repo_mapping
 config.json $tmpdir/config.json
 protobuf+3.19.2/foo/runfile $tmpdir/protobuf+3.19.2/foo/runfile
