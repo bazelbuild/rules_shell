@@ -113,7 +113,9 @@ esac
 # Does not exit with a non-zero exit code if no match is found and performs a case-insensitive
 # search on Windows.
 function __runfiles_maybe_grep() {
-  grep $_RLOCATION_GREP_CASE_INSENSITIVE_ARGS "$@" || test $? = 1;
+  # The GREP_XXX variables influence how grep behaves. Specifically, they can
+  # affect the output from the grep command.
+  GREP_COLOR="" GREP_OPTIONS="" grep $_RLOCATION_GREP_CASE_INSENSITIVE_ARGS "$@" || test $? = 1;
 }
 export -f __runfiles_maybe_grep
 

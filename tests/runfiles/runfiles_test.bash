@@ -522,6 +522,13 @@ function test_directory_based_envvars() {
   [[ -z "${RUNFILES_MANIFEST_FILE:-}" ]] || fail
 }
 
+function test_with_grep_env_vars_set() {
+  # These influence how grep behaves.
+  export GREP_COLOR='1;35;40'
+  export GREP_OPTIONS='--color=always'
+  test_init_manifest_based_runfiles
+}
+
 function main() {
   local -r manifest_file="${RUNFILES_MANIFEST_FILE:-}"
   local -r dir="${RUNFILES_DIR:-}"
