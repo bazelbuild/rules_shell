@@ -115,9 +115,7 @@ esac
 function __runfiles_maybe_grep() {
   # The GREP_XXX variables influence how grep behaves. Specifically, they can
   # affect the output from the grep command.
-  unset GREP_COLOR
-  unset GREP_OPTIONS
-  grep $_RLOCATION_GREP_CASE_INSENSITIVE_ARGS "$@" || test $? = 1;
+  GREP_COLOR="" GREP_OPTIONS="" grep $_RLOCATION_GREP_CASE_INSENSITIVE_ARGS "$@" || test $? = 1;
 }
 export -f __runfiles_maybe_grep
 
