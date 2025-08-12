@@ -84,6 +84,8 @@
 #
 #       cat "$(rlocation my_workspace/path/to/my/data.txt)"
 #
+# You can skip steps 1 and 2 when setting "use_bash_launcher" attribute in sh_binary or sh_test.
+#
 
 if [[ ! -d "${RUNFILES_DIR:-/dev/null}" && ! -f "${RUNFILES_MANIFEST_FILE:-/dev/null}" ]]; then
   if [[ -f "$0.runfiles_manifest" ]]; then
