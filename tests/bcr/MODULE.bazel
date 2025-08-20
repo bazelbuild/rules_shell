@@ -5,3 +5,5 @@ local_path_override(
     module_name = "rules_shell",
     path = "../..",
 )
+
+bazel_dep(name = "bazel_features", version = "1.34.0")
