@@ -169,39 +169,20 @@ def _launcher_for_windows(ctx, primary_output, main_file):
 
     return _create_windows_exe_launcher(ctx, sh_toolchain, primary_output)
 
-def make_sh_executable_rule(extra_attrs = {}, **kwargs):
+def make_sh_executable_rule(doc, extra_attrs = {}, **kwargs):
     return rule(
         _sh_executable_impl,
-        doc = """
-<p>
-  The <code>sh_binary</code> rule is used to declare executable shell scripts.
-  (<code>sh_binary</code> is a misnomer: its outputs aren't necessarily binaries.) This rule ensures
-  that all dependencies are built, and appear in the <code>runfiles</code> area at execution time.
-  We recommend that you name your <code>sh_binary()</code> rules after the name of the script minus
-  the extension (e.g. <code>.sh</code>); the rule name and the file name must be distinct.
-  <code>sh_binary</code> respects shebangs, so any available interpreter may be used (eg.
-  <code>#!/bin/zsh</code>)
-</p>
-<h4 id="sh_binary_examples">Example</h4>
-<p>For a simple shell script with no dependencies and some data files:
-</p>
-<pre class="code">
-sh_binary(
-    name = "foo",
-    srcs = ["foo.sh"],
-    data = glob(["datafiles/*.txt"]),
-)
-</pre>
-""",
+        doc = doc,
         attrs = {
             "srcs": attr.label_list(
                 allow_files = True,
                 doc = """
-The list of input files.
+The file containing the shell script.
 <p>
-  This attribute should be used to list shell script source files that belong to
-  this library. Scripts can load other scripts using the shell's <code>source</code>
-  or <code>.</code> command.
+  This attribute must be a singleton list, whose element is the shell script.
+  This script must be executable, and may be a source file or a generated file.
+  All other files required at runtime (whether scripts or data) belong in the
+  <code>data</code> attribute.
 </p>
 """,
             ),

@@ -20,6 +20,24 @@ load(":sh_executable.bzl", "make_sh_executable_rule")
 visibility("public")
 
 sh_test = make_sh_executable_rule(
+    doc = """
+<p>A <code>sh_test()</code> rule creates a test written as a Bourne shell script.</p>
+
+<p>See the <a href="${link common-definitions#common-attributes-tests}">
+attributes common to all test rules (*_test)</a>.</p>
+
+<h4 id="sh_test_examples">Examples</h4>
+
+<pre class="code">
+sh_test(
+    name = "foo_integration_test",
+    size = "small",
+    srcs = ["foo_integration_test.sh"],
+    deps = [":foo_sh_lib"],
+    data = glob(["testdata/*.txt"]),
+)
+</pre>
+""",
     test = True,
     fragments = ["coverage"],
     extra_attrs = {
