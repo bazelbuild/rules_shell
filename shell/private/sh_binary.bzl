@@ -19,4 +19,27 @@ load(":sh_executable.bzl", "make_sh_executable_rule")
 # For doc generation only.
 visibility("public")
 
-sh_binary = make_sh_executable_rule(executable = True)
+sh_binary = make_sh_executable_rule(
+    doc = """
+<p>
+  The <code>sh_binary</code> rule is used to declare executable shell scripts.
+  (<code>sh_binary</code> is a misnomer: its outputs aren't necessarily binaries.) This rule ensures
+  that all dependencies are built, and appear in the <code>runfiles</code> area at execution time.
+  We recommend that you name your <code>sh_binary()</code> rules after the name of the script minus
+  the extension (e.g. <code>.sh</code>); the rule name and the file name must be distinct.
+  <code>sh_binary</code> respects shebangs, so any available interpreter may be used (eg.
+  <code>#!/bin/zsh</code>)
+</p>
+<h4 id="sh_binary_examples">Example</h4>
+<p>For a simple shell script with no dependencies and some data files:
+</p>
+<pre class="code">
+sh_binary(
+    name = "foo",
+    srcs = ["foo.sh"],
+    data = glob(["datafiles/*.txt"]),
+)
+</pre>
+""",
+    executable = True,
+)
