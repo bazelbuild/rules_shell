@@ -34,10 +34,19 @@ def _sh_executable_impl(ctx):
     runfiles = ctx.runfiles(collect_default = True)
 
     entrypoint = ctx.actions.declare_file(ctx.label.name)
+    targets_windows = ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo])
     if ctx.attr.use_bash_launcher:
+        if targets_windows:
+            # Windows uses a launcher executable that invokes the correct shell.
+            # A Windows-style path in a shebang is either ignored or causes an
+            # error.
+            shebang = ""
+        else:
+            shell = ctx.toolchains[_SH_TOOLCHAIN_TYPE].path
+            shebang = "#!{}".format(shell)
         ctx.actions.write(
             entrypoint,
-            content = """#!{shell}
+            content = """{shebang}
 
 # --- begin runfiles.bash initialization v3 ---
 set -uo pipefail; set +e; f=bazel_tools/tools/bash/runfiles/runfiles.bash
@@ -54,7 +63,7 @@ runfiles_export_envvars
 
 exec "$(rlocation "{src}")" "$@"
 """.format(
-                shell = ctx.toolchains[_SH_TOOLCHAIN_TYPE].path,
+                shebang = shebang,
                 src = _to_rlocation_path(ctx, src),
             ),
             is_executable = True,
@@ -72,7 +81,7 @@ exec "$(rlocation "{src}")" "$@"
     # TODO: Consider extracting this logic into a function provided by
     # sh_toolchain to allow users to inject launcher creation logic for
     # non-Windows platforms.
-    if ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
+    if targets_windows:
         main_executable = _launcher_for_windows(ctx, entrypoint, src)
         direct_files.append(main_executable)
     else:
