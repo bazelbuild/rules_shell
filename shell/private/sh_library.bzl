@@ -25,6 +25,8 @@ def _sh_library_impl(ctx):
         transitive_files.append(target[DefaultInfo].files)
     for target in ctx.attr.data:
         transitive_files.append(target[DefaultInfo].files)
+    for target in ctx.attr.tools:
+        transitive_files.append(target[DefaultInfo].files)
     files = depset(transitive = transitive_files)
 
     runfiles = ctx.runfiles(transitive_files = files, collect_default = True)
@@ -32,7 +34,7 @@ def _sh_library_impl(ctx):
     instrumented_files_info = coverage_common.instrumented_files_info(
         ctx,
         source_attributes = ["srcs"],
-        dependency_attributes = ["deps", "data"],
+        dependency_attributes = ["deps", "data", "tools"],
     )
 
     return [
@@ -112,6 +114,15 @@ most build rules</a>.
   interpreted program source code depended on by the code in <code>srcs</code>. The files
   provided by these rules will be present among the <code>runfiles</code> of this target.
 </p>
+""",
+        ),
+        "tools": attr.label_list(
+            cfg = config.exec(),
+            allow_files = True,
+            doc = """
+The list of tool dependencies, similar to genrule's equivalent. You can use
+this to ensure that any helper binaries your scripts need are built in the exec
+configuration.
 """,
         ),
     },
